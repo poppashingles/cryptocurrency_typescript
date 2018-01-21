@@ -70,5 +70,13 @@ class Block {
     }
 
     return true;
-  }
+  };
+
+  const replaceChain = (newBlocks: Block[]) => {
+    if(isValidChain(newBlocks) && newBlocks.length > getBlockChain().length) {
+      console.log('Received blockchain is valid. Replacing current blockchain with received blockchain');
+      blockChain = newBlocks;
+      broadcastLatest();
+    }
+  };
 }
