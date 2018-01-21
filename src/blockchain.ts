@@ -53,4 +53,22 @@ class Block {
           && typeof block.timestamp === 'number'
           && typeof block.data === 'string';
   }
+
+  const isValidChain = (blockChainToValidate: Block[]): boolean => {
+    const isValidGenesis = (block:Block): boolean => {
+      return JSON.stringify(block) === JSON.stringify(genesisBlock);
+    };
+
+    if(!isValidGenesis(blockChainToValidate[0])) {
+      return false;
+    }
+
+    for(let i = 1 ; i < blockChainToValidate.length ; i++) {
+      if(!isValidNewBlock(blockChainToValidate[i], blockChainToValidate[i-1])) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 }
