@@ -9,18 +9,22 @@ class Block {
     public previousHash: string;
     public timestamp: number;
     public data: string;
+    public difficulty: string;
+    public nonce: number;
 
-    constructor(index: number, hash: string, previousHash: string, timestamp: number, data: string) {
+    constructor(index: number, hash: string, previousHash: string, timestamp: number, data: string, difficulty: number, nonce: number) {
         this.index = index;
         this.previousHash = previousHash;
         this.timestamp = timestamp;
         this.data = data;
         this.hash = hash;
+        this.difficulty = difficulty;
+        this.nonce = nonce;
     }
 }
 
 const genesisBlock: Block = new Block(
-    0, '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7', '', 1465154705, 'my genesis block!!'
+    0, '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7', '', 1465154705, 'my genesis block!!', 3, 0
 );
 
 let blockchain: Block[] = [genesisBlock];
@@ -118,6 +122,17 @@ const hashMatchesDifficulty = (hash: string, difficulty: number): boolean => {
   const hashInBinary: string = hexToBinary(hash);
   const requiredPrefix: string = '0'.repeat(difficulty);
   return hashInBinary.startsWith(requiredPrefix);
+}
+
+const findBlock = (index: number, previousHash: string, timestamp: number, data: string, difficulty: number): Block => {
+  let nonce = 0;
+  while (true) {
+    const hash: string = calculateHash(index, previousHash, timestamp, data, difficulty, nonce);
+    if (hashMatchesDifficulty(hash, difficulty)) {
+        return new Block(index, hash, previousHash, timestamp, data, difficulty, nonce);
+    }
+    nonce++;
+  }
 }
 
 export {Block, getBlockchain, getLatestBlock, generateNextBlock, isValidBlockStructure, replaceChain, addBlockToChain};
