@@ -1,3 +1,6 @@
+import * as CryptoJS from 'crypto-js';
+import {broadcastLatest} from './p2p';
+
 class Block {
   public index: number;
   public hash: string;
@@ -13,7 +16,7 @@ class Block {
     this.data = data;
   }
 
-  const blockChain: Block[] = [genesisBlock];
+  let blockChain: Block[] = [genesisBlock];
 
   const calculateHash = (index: number, previousHash: string, timestamp: number, data: string): string =>
     CrytoJS.SHA256(index + previousHash + timestamp + data).toString();
@@ -77,6 +80,10 @@ class Block {
       console.log('Received blockchain is valid. Replacing current blockchain with received blockchain');
       blockChain = newBlocks;
       broadcastLatest();
+    } else {
+      console.log('Received blockchain invalid');
     }
   };
 }
+
+export {Block, getBlockchain, getLatestBlock, generateNextBlock, isValidBlockStructure, replaceChain, addBlockToChain};
